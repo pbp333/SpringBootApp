@@ -4,6 +4,8 @@ import com.pbp333.springbootapp.springBootApp.model.ToDo;
 import com.pbp333.springbootapp.springBootApp.services.ToDoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -15,7 +17,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Controller
-@SessionAttributes("name")
 public class ToDoController {
 
     @Autowired
@@ -30,14 +31,16 @@ public class ToDoController {
     @RequestMapping(value = "/todo-list", method = RequestMethod.GET)
     public String showToDos(ModelMap modelMap) {
 
-        modelMap.put("todos", toDoService.getToDos("me"));
+        String name = getLoggedInUserName();
+        modelMap.put("todos", toDoService.getToDos(name));
+        modelMap.put("name", getLoggedInUserName());
         return "todo-list";
     }
 
     @RequestMapping(value = "/add-todo", method = RequestMethod.GET)
     public String showAddToDoPage(ModelMap modelMap) {
 
-        modelMap.addAttribute("toDo", new ToDo(0, getLoggedInUserName(modelMap), "", new Date(), false));
+        modelMap.addAttribute("toDo", new ToDo(0, getLoggedInUserName(), "", new Date(), false));
         return "todo";
     }
 
@@ -48,7 +51,7 @@ public class ToDoController {
             return "todo";
         }
 
-        toDoService.addTodo(getLoggedInUserName(modelMap), toDo.getDesc(), new Date(), false);
+        toDoService.addTodo(getLoggedInUserName(), toDo.getDesc(), new Date(), false);
 
         return "redirect:/todo-list";
     }
@@ -73,7 +76,7 @@ public class ToDoController {
     @RequestMapping(value = "/update-todo", method = RequestMethod.POST)
     public String updateToDo(ModelMap modelMap, @Valid ToDo toDo, BindingResult result) {
 
-        toDo.setUser(getLoggedInUserName(modelMap));
+        toDo.setUser(getLoggedInUserName());
 
         if(result.hasErrors()){
 
@@ -84,8 +87,13 @@ public class ToDoController {
         return "redirect:/todo-list";
     }
 
-    private String getLoggedInUserName(ModelMap modelMap) {
-        return (String)modelMap.get("name");
+    private String getLoggedInUserName() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if(principal instanceof UserDetails){
+            return ((UserDetails)principal).getUsername();
+        }
+        return principal.toString();
     }
 
 }

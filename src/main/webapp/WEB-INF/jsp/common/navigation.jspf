@@ -8,5 +8,8 @@
             <li><a href="/todo-list">To Do's</a></li>
 
         </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li class="active"><a href="/logout">Logout</a></li>
+        </ul>
     </div>
 </nav>
