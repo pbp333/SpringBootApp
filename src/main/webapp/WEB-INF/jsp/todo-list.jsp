@@ -1,13 +1,8 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<hmtl>
-    <head>
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-        <title>To Do's for ${name}</title>
-    </head>
-    <body>
+<%@ include file="common/header.jspf" %>
+<%@ include file="common/navigation.jspf" %>
 
     <div class="container">
-        <h1>Your To Do's</h1>
+        <h1>${name}, your To Do's</h1>
 
 
         <table class="table table-striped">
@@ -24,7 +19,7 @@
             <c:forEach items="${todos}" var="todo">
                 <tr>
                     <td>${todo.desc}</td>
-                    <td>${todo.targetDate}</td>
+                    <td><fmt:formatDate value="${todo.targetDate}" pattern="dd/MM/yyyy"/></td>
                     <td>${todo.done}</td>
                     <td><a type="button" class="btn btn-success" href="/update-todo?id=${todo.id}">Update</a></td>
                     <td><a type="button" class="btn btn-warning" href="/delete-todo?id=${todo.id}">Delete</a></td>
@@ -38,9 +33,4 @@
 
     </div>
 
-    <script
-            src="https://code.jquery.com/jquery-1.9.1.min.js"
-            integrity="sha256-wS9gmOZBqsqWxgIVgA8Y9WcQOa7PgSIX+rPA0VL2rbQ="
-            crossorigin="anonymous"></script>
-    </body>
-</hmtl>
+<%@ include file="common/footer.jsp" %>

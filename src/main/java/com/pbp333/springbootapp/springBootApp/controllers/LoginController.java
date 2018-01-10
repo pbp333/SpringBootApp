@@ -13,27 +13,10 @@ public class LoginController {
     @Autowired
     private LoginService loginService;
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
-    //@ResponseBody
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public String loginMessage(ModelMap modelMap) {
 
-        //modelMap.put("name", name);
-        return "login";
+        modelMap.put("name", "me");
+        return "welcome";
     }
-
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    //@ResponseBody
-    public String loggedInMessage(@SessionAttribute @RequestParam String name, @RequestParam String password, ModelMap modelMap) {
-
-        if (loginService.validateUser(name, password)) {
-            modelMap.put("name", name);
-            modelMap.put("password", password);
-            return "welcome";
-        }
-        String message = "Invalid login";
-        modelMap.put("message", message);
-        return "login";
-    }
-
-
 }

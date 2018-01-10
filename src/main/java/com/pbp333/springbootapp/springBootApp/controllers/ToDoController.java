@@ -3,12 +3,15 @@ package com.pbp333.springbootapp.springBootApp.controllers;
 import com.pbp333.springbootapp.springBootApp.model.ToDo;
 import com.pbp333.springbootapp.springBootApp.services.ToDoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Controller
@@ -17,6 +20,12 @@ public class ToDoController {
 
     @Autowired
     private ToDoService toDoService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, false));
+    }
 
     @RequestMapping(value = "/todo-list", method = RequestMethod.GET)
     public String showToDos(ModelMap modelMap) {
@@ -28,7 +37,7 @@ public class ToDoController {
     @RequestMapping(value = "/add-todo", method = RequestMethod.GET)
     public String showAddToDoPage(ModelMap modelMap) {
 
-        modelMap.addAttribute("toDo", new ToDo(0, (String) modelMap.get("name"), "", new Date(), false));
+        modelMap.addAttribute("toDo", new ToDo(0, getLoggedInUserName(modelMap), "", new Date(), false));
         return "todo";
     }
 
@@ -39,7 +48,7 @@ public class ToDoController {
             return "todo";
         }
 
-        toDoService.addTodo((String) modelMap.get("name"), toDo.getDesc(), new Date(), false);
+        toDoService.addTodo(getLoggedInUserName(modelMap), toDo.getDesc(), new Date(), false);
 
         return "redirect:/todo-list";
     }
@@ -64,7 +73,7 @@ public class ToDoController {
     @RequestMapping(value = "/update-todo", method = RequestMethod.POST)
     public String updateToDo(ModelMap modelMap, @Valid ToDo toDo, BindingResult result) {
 
-        toDo.setUser((String)modelMap.get("name"));
+        toDo.setUser(getLoggedInUserName(modelMap));
 
         if(result.hasErrors()){
 
@@ -73,6 +82,10 @@ public class ToDoController {
 
         toDoService.updateToDo(toDo);
         return "redirect:/todo-list";
+    }
+
+    private String getLoggedInUserName(ModelMap modelMap) {
+        return (String)modelMap.get("name");
     }
 
 }
