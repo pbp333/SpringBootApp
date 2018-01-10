@@ -12,9 +12,13 @@
 
         <table class="table table-striped">
             <thead>
-            <td>Description</td>
-            <td>Date</td>
-            <td>is Done?</td>
+            <tr>
+                <th>Description</th>
+                <th>Date</th>
+                <th>is Done?</th>
+                <th></th>
+                <th></th>
+            </tr>
             </thead>
             <tbody>
             <c:forEach items="${todos}" var="todo">
@@ -22,6 +26,8 @@
                     <td>${todo.desc}</td>
                     <td>${todo.targetDate}</td>
                     <td>${todo.done}</td>
+                    <td><a type="button" class="btn btn-success" href="/update-todo?id=${todo.id}">Update</a></td>
+                    <td><a type="button" class="btn btn-warning" href="/delete-todo?id=${todo.id}">Delete</a></td>
                 </tr>
             </c:forEach>
             </tbody>

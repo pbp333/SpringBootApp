@@ -1,12 +1,17 @@
 package com.pbp333.springbootapp.springBootApp.model;
 
+import org.springframework.stereotype.Component;
+
+import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.Objects;
 
 public class ToDo {
 
+
     private int id;
     private String user;
+    @Size(min=10, message = "add at least 10 characters...")
     private String desc;
     private Date targetDate;
     private boolean done;
@@ -17,6 +22,10 @@ public class ToDo {
         this.desc = desc;
         this.targetDate = targetDate;
         this.done = done;
+    }
+
+    public ToDo(){
+        super();
     }
 
     public int getId() {
@@ -64,17 +73,13 @@ public class ToDo {
         if (this == o) return true;
         if (!(o instanceof ToDo)) return false;
         ToDo toDo = (ToDo) o;
-        return id == toDo.id &&
-                done == toDo.done &&
-                Objects.equals(user, toDo.user) &&
-                Objects.equals(desc, toDo.desc) &&
-                Objects.equals(targetDate, toDo.targetDate);
+        return id == toDo.id;
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, user, desc, targetDate, done);
+        return Objects.hash(id);
     }
 
     @Override
